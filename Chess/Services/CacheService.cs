@@ -17,9 +17,18 @@ namespace Chess.Services
         public CacheService(IMemoryCache cache)
         {
             _cache = cache;
-            _cache.Set<ConcurrentDictionary<string, PlayerDto>>(PLAYERS_KEY, new ConcurrentDictionary<string, PlayerDto>());
-            _cache.Set<ConcurrentDictionary<Guid, GameDto>>(GAMES_KEY, new ConcurrentDictionary<Guid, GameDto>());
-            _cache.Set<ConcurrentDictionary<Guid, ChallengeDto>>(CHALLENGES_KEY, new ConcurrentDictionary<Guid, ChallengeDto>());
+            if (!_cache.TryGetValue<ConcurrentDictionary<string, PlayerDto>>(PLAYERS_KEY, out _))
+            {
+                _cache.Set<ConcurrentDictionary<string, PlayerDto>>(PLAYERS_KEY, new ConcurrentDictionary<string, PlayerDto>());
+            }
+            if (!_cache.TryGetValue<ConcurrentDictionary<Guid, GameDto>>(GAMES_KEY, out _))
+            {
+                _cache.Set<ConcurrentDictionary<Guid, GameDto>>(GAMES_KEY, new ConcurrentDictionary<Guid, GameDto>());
+            }
+            if (!_cache.TryGetValue<ConcurrentDictionary<Guid, ChallengeDto>>(CHALLENGES_KEY, out _))
+            {
+                _cache.Set<ConcurrentDictionary<Guid, ChallengeDto>>(CHALLENGES_KEY, new ConcurrentDictionary<Guid, ChallengeDto>());
+            }
         }
 
         public bool AddPlayer(PlayerDto player)
