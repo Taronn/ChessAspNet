@@ -48,14 +48,14 @@ void RegisterServices(IServiceCollection services)
     services.AddControllers();
     services.AddAuthorization();
     services.AddMemoryCache();
-    services.AddSingleton<IMemoryCache, MemoryCache>();
+    services.AddScoped<IMemoryCache, MemoryCache>();
     services.AddSignalR();
 
 
     services.AddAutoMapper(typeof(ChessProfile));
     services.AddScoped<IAuthService, AuthService>();
     services.AddScoped<IRegistrationService, RegistrationService>();
-    services.AddSingleton<ICacheService, CacheService>();
+    services.AddScoped<ICacheService, CacheService>();
     services.AddScoped<IPlayerService, PlayerService>();
     services.AddScoped<IGameService, GameService>();
     services.AddScoped<IChallengeService, ChallengeService>();
@@ -70,7 +70,7 @@ void RegisterServices(IServiceCollection services)
 
 void Configure(WebApplication app)
 {
-    app.UseCors(options => options.WithOrigins("https://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+    app.UseCors(options => options.WithOrigins("https://chesstaron.netlify.app").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
     app.UseStatusCodePages();
     app.UseAuthentication();
     app.UseAuthorization();
