@@ -92,16 +92,4 @@ namespace Chess.Services
         ChallengerOffline,
         ChallengerAlreadyInGame,
     }
-    // public class ChallengeResult
-    // {
-    //     public bool Success { get; set; }
-    //     public string Message { get; set; }
-    //     public ChallengeDto? Challenge { get; set; }
-    //     public ChallengeResult(bool success, string message, ChallengeDto? challenge = null)
-    //     {
-    //         Success = success;
-    //         Message = message;
-    //         Challenge = challenge;
-    //     }
-    // }
 }
