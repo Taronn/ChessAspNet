@@ -33,7 +33,7 @@ namespace Chess.Hubs
             PlayerDto player = await _playerService.CreatePlayerAsync(userId, game);
 
             if (game == null)
-            {
+            { 
                 await Clients.Users(AvailablePlayers.Where(p => p.Id != Player.Id).Select(p => p.Id)).SendAsync("PlayerJoined", Player);
                 await Clients.Caller.SendAsync("GetPlayersList", AvailablePlayers.Where(p => p.Id != Player.Id));
                 return;

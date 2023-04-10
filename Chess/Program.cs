@@ -48,7 +48,6 @@ void RegisterServices(IServiceCollection services)
     services.AddControllers();
     services.AddAuthorization();
     services.AddMemoryCache();
-    services.AddScoped<IMemoryCache, MemoryCache>();
     services.AddSignalR();
 
 
