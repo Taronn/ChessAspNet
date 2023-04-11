@@ -3,10 +3,6 @@
     "mssql1": {
       "restored": true,
       "restoreTime": "2023-04-09T18:36:56.831662Z"
-    },
-    "signalr1": {
-      "restored": true,
-      "restoreTime": "2023-04-09T18:32:50.7409473Z"
     }
   },
   "parameters": {
@@ -15,20 +11,10 @@
       "Type": "subscription",
       "Value": "35ffc8ab-fe72-4a79-a26c-5fceb5676515"
     },
-    "signalr1.resourceGroupName": {
-      "Name": "signalr1.resourceGroupName",
-      "Type": "resourceGroup",
-      "Value": "Chess"
-    },
     "mssql1.resourceGroupName": {
       "Name": "mssql1.resourceGroupName",
       "Type": "resourceGroup",
       "Value": "Chess"
-    },
-    "signalr1.subscriptionId": {
-      "Name": "signalr1.subscriptionId",
-      "Type": "subscription",
-      "Value": "35ffc8ab-fe72-4a79-a26c-5fceb5676515"
     }
   }
 }

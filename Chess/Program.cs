@@ -74,4 +74,5 @@ void Configure(WebApplication app)
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+    
 }
