@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+
 var authOptions = builder.Configuration.GetRequiredSection("Jwt");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer((options) =>
