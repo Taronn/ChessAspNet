@@ -22,6 +22,6 @@ public class User
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public Setting Settings { get; set; }
-    public ICollection<Stats> Stats { get; set; }
+    public ICollection<Statistic> Stats { get; set; }
    
 }
