@@ -8,8 +8,14 @@ namespace Chess.Domain.Enums
 {
     public enum GameType
     {
+<<<<<<< HEAD
         Rapid,
         Blitz,
         Bullet
+=======
+        rapid,
+        blitz,
+        bullet
+>>>>>>> 09caae72ef22fc7d4757daee849468644eb5cb31
     }
 }
