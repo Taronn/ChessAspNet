@@ -1,3 +1,5 @@
+using Chess.Application.Interfaces.Caching;
+using Chess.Infrastructure.Caching;
 using Chess.Infrastructure.Factories;
 
 namespace Chess.Infrastructure;
@@ -8,6 +10,8 @@ public static class DependencyInjection
     {
         services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IGameCache, GameCache>();
+        services.AddSingleton<IInviteCache, InviteCache>();
 
         return services;
     }
