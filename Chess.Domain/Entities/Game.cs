@@ -1,19 +1,15 @@
 ﻿using Chess.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Chess.Domain.Entities
 {
-    public class Games
+    public class Game
     {
         public int Id { get; set; } 
         public GameType Type { get; set; }
-        public int WhitePlayerId { get; set; }
-        public int BlackPlayerId { get; set; }
-        public int WinnerId { get; set; }
+        public User WhitePlayer { get; set; }
+        public User BlackPlayer { get; set; }
+        public User Winner { get; set; }
         public string Pgn { get; set; }
         public int Timer {  get; set; }
         public int TimerIncrement {  get; set; }
