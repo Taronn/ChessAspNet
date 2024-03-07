@@ -7,7 +7,7 @@ public class PlayerService : IPlayerService
 {
     private readonly IGameCache _gameCache;
     
-    PlayerService(IGameCache gameCache)
+    public PlayerService(IGameCache gameCache)
     {
         _gameCache = gameCache;
     }
