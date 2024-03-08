@@ -12,6 +12,6 @@ public class Player
     public string Country { get; set; }
     public string Picture { get; set; }
     public List<Statistic> Statistics { get; set; }
-    public List<Invite> Invites { get; set; }
+    public Invite Invite { get; set; }
     public Game Game { get; set; }
 }
