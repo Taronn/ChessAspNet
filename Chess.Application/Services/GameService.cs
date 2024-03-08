@@ -4,5 +4,6 @@ namespace Chess.Application.Services;
 
 public class GameService : IGameService
 {
+
     
 }

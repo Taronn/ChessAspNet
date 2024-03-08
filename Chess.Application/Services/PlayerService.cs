@@ -5,15 +5,19 @@ namespace Chess.Application.Services;
 
 public class PlayerService : IPlayerService
 {
-    private readonly IGameCache _gameCache;
+    private readonly IPlayerCache _playerCache;
     
-    public PlayerService(IGameCache gameCache)
+    public PlayerService(IPlayerCache playerCache)
     {
-        _gameCache = gameCache;
+        _playerCache = playerCache;
     }
     
     public void Join(int playerId)
     {
         throw new System.NotImplementedException();
+    }
+    public Player[] GetAllPlayer()
+    {
+        return _playerCache.FindAll();
     }
 }
