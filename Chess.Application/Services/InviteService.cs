@@ -22,7 +22,7 @@ namespace Chess.Application.Services
             return _playerCache.Find(fromId) == null;
         }
 
-        public void Create(int fromId, dynamic invite)
+        public Invite Create(int fromId, dynamic invite)
         {
             if (fromId == invite.ToId)
             {
@@ -37,7 +37,8 @@ namespace Chess.Application.Services
                 newInvite.CreatedAt = DateTime.Now;
                 newInvite.From = _playerCache.Find(fromId);
                 newInvite.To = _playerCache.Find(invite.ToId);
-
+                _inviteCache.Add(newInvite);
+                return newInvite;
             }
             catch
             {
