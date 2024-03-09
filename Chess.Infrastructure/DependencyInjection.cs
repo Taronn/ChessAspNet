@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IFriendsRepository, FriendsRepository>();
         // Caching
         services.AddSingleton<IGameCache, GameCache>();
         services.AddSingleton<IInviteCache, InviteCache>();
