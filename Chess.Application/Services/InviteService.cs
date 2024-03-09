@@ -8,39 +8,42 @@ namespace Chess.Application.Services
 {
     public class InviteService : IInviteService
     {
-        private readonly IInviteCache _cache;
-        private readonly IPlayerCache _player;
+        private readonly IInviteCache _inviteCache;
+        private readonly IPlayerCache _playerCache;
 
-        public InviteService(IInviteCache cache, IPlayerCache player)
+        public InviteService(IInviteCache inviteCache, IPlayerCache playerCache)
         {
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _player = player ?? throw new ArgumentNullException(nameof(player));
+            _inviteCache = inviteCache;
+            _playerCache = playerCache;
         }
 
-        public void SendInvitation(int playerId1, int playerId2, GameConfiguration gc, DateTime time)
+        public bool IsInGame(int fromId)
         {
-            if (gc == null)
-                throw new ArgumentNullException(nameof(gc));
+            return _playerCache.Find(fromId) == null;
+        }
 
-            // Perform parameter validation if needed
-
-            var player1 = _player.Find(playerId1);
-            var player2 = _player.Find(playerId2);
-
-            if (player1 == null || player2 == null)
-                throw new ArgumentException("Invalid player ID");
-
-            var invite = new Invite
+        public void Create(int fromId, dynamic invite)
+        {
+            if (fromId == invite.ToId)
             {
-                From = player1,
-                To = player2,
-                FromId = playerId1,
-                ToId = playerId2,
-                GameConfiguration = gc,
-                CreatedAt = time
-            };
+                throw new ArgumentException("FromID=inviteID");
+                
+            }
+            try
+            {
+                Invite newInvite = new Invite();
+                newInvite.FromId = fromId;
+                newInvite.ToId = invite.ToId;
+                newInvite.CreatedAt = DateTime.Now;
+                newInvite.From = _playerCache.Find(fromId);
+                newInvite.To = _playerCache.Find(invite.ToId);
 
-            _cache.Add(invite);
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot create new Invite");
+            }
+
         }
     }
 }

@@ -8,5 +8,6 @@ namespace Chess.Application.Interfaces.Services
 {
     public interface IInviteService
     {
+        bool IsInGame(int fromId);
     }
 }
