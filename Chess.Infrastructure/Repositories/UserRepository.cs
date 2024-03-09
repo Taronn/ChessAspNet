@@ -20,7 +20,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> FindAsync(int id)
     {
-        const string query = """
+        const string query = $"""
                              SELECT * 
                              FROM "Users" 
                              INNER JOIN "Settings" ON "Users"."Id" = "Settings"."Id"

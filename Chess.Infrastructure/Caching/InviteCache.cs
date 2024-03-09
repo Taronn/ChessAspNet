@@ -5,22 +5,15 @@ namespace Chess.Infrastructure.Caching;
 
 public class InviteCache : IInviteCache
 {
-    private readonly ConcurrentDictionary<int, Invite> _cache = new();
-    private readonly ConcurrentDictionary<int, Invite> _cacheByPlayer = new();
-    
-    public Invite FindById(int id)
-    {
-        return _cache.GetValueOrDefault(id);
-    }
-    
-    public Invite FindByPlayerId(int id)
+    private readonly ConcurrentDictionary<Guid, Invite> _cache = new();
+
+    public Invite Find(Guid id)
     {
         return _cache.GetValueOrDefault(id);
     }
     
     public void Add(Invite invite)
     {
-        _cache[invite.Id] = invite;
-        _cacheByPlayer[invite.ToId] = invite;
+        _cache[invite.ToId] = invite;
     }
 }
