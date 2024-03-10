@@ -4,7 +4,7 @@ namespace Chess.Domain.Entities;
 
 public class Statistic
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public GameType Type { get; set; }
     public int GamesPlayed { get; set; }
     public int Wins { get; set; }
@@ -14,5 +14,5 @@ public class Statistic
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public User User { get; set; }
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 }

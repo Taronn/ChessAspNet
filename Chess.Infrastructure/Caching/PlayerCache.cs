@@ -5,20 +5,20 @@ namespace Chess.Infrastructure.Caching;
 
 public class PlayerCache : IPlayerCache
 {
-    private readonly ConcurrentDictionary<int, Player> _players = new();
+    private readonly ConcurrentDictionary<Guid, Player> _cache = new();
 
-    public Player Find(int id)
+    public Player Find(Guid id)
     {
-        return _players.GetValueOrDefault(id);
+        return _cache.GetValueOrDefault(id);
     }
 
     public Player[] FindAll()
     {
-        return _players.Values.ToArray();
+        return _cache.Values.ToArray();
     }
 
     public void Add(Player player)
     {
-        _players[player.Id] = player;
+        _cache[player.Id] = player;
     }
 }

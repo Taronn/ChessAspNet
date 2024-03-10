@@ -10,11 +10,15 @@ public class ChessHub : Hub
     private const string Lobby = "Lobby";
     public override async Task OnConnectedAsync()
     {
+        System.Console.WriteLine("adasd");
+
         await Groups.AddToGroupAsync(Context.ConnectionId, Lobby);
+        await Clients.User(UserId).SendAsync("GetPlayersList", "Hello from server!");
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
+        System.Console.WriteLine("Disconnected");
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, Lobby);
     }
 

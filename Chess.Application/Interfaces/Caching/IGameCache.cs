@@ -2,7 +2,6 @@ namespace Chess.Application.Interfaces.Caching;
 
 public interface IGameCache
 {
-    Game FindById(int id);
-    Game FindByPlayerId(int id);
+    Game Find(Guid id);
     void Add(Game game);
 }

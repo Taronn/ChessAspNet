@@ -4,7 +4,7 @@ namespace Chess.Domain.Entities;
 
 public class User
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     public string Username { get; set; }
     public string Email { get; set; }
     public bool IsVerified { get; set; }
