@@ -17,12 +17,12 @@ namespace Chess.Application.Services
             _playerCache = playerCache;
         }
 
-        public bool IsInGame(int fromId)
+        public bool IsInGame(Guid fromId)
         {
             return _playerCache.Find(fromId) == null;
         }
 
-        public Invite Create(int fromId, dynamic invite)
+        public Invite Create(Guid fromId, dynamic invite)
         {
             if (fromId == invite.ToId)
             {

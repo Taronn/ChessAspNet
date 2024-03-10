@@ -3,5 +3,5 @@ namespace Chess.Application.Interfaces.Repositories;
 public interface IUserRepository
 {
     void AddAsync(User user);
-    Task<User> FindAsync(int id);
+    Task<User> FindAsync(Guid id);
 }

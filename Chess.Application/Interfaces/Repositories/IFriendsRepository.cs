@@ -2,8 +2,8 @@
 {
     public interface IFriendsRepository
     {
-        Task<FriendRequests> SaveRequest(int senderId, int recieverId);
-        Task<bool> IsRequestSent(int senderId, int recieverId);
-        Task<bool> IsFriends(int userId1, int userId2);
+        Task<FriendRequests> SaveRequest(Guid senderId, Guid receiverId);
+        Task<bool> IsRequestSent(Guid senderId, Guid receiverId);
+        Task<bool> IsFriends(Guid userId1, Guid userId2);
     }
 }

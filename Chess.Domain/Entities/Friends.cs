@@ -8,9 +8,11 @@ namespace Chess.Domain.Entities
 {
     public class Friends
     {
-        public int Id { get; set; }
-        public int UserId1 { get; set; }
-        public int UserId2 { get; set; }
+        public Guid Id { get; set; }
+        public Player User1 { get; set; }
+        public Guid UserId1 { get; set; }
+        public Player User2 { get; set; }
+        public Guid UserId2 { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }

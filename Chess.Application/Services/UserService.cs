@@ -12,7 +12,7 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
     
-    public Task<User> FindAsync(int id)
+    public Task<User> FindAsync(Guid id)
     {
         return _userRepository.FindAsync(id);
     }

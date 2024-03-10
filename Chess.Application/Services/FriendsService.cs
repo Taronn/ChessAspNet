@@ -12,32 +12,32 @@ namespace Chess.Application.Services
             this._friendsRepository = friendsRepository;
             this._userRepository = userRepository;
         }
-        public async Task<FriendRequests> SendRequest(int senderId, int recieverId)
+        public async Task<FriendRequests> SendRequest(Guid senderId, Guid receiverId)
         {
-            if(senderId == recieverId)
+            if(senderId == receiverId)
             {
                 throw new Exception("ERROR");
             }
 
-            var user = await _userRepository.FindAsync(recieverId);
+            var user = await _userRepository.FindAsync(receiverId);
             if (user == null)
             {
                 throw new Exception("User is not exists");
             }
 
-            var isFriends = await _friendsRepository.IsFriends(senderId, recieverId);
+            var isFriends = await _friendsRepository.IsFriends(senderId, receiverId);
             if(isFriends)
             {
                 throw new Exception("You are already friends");
             }
 
-            var isRequestSent = await _friendsRepository.IsRequestSent(senderId, recieverId);
+            var isRequestSent = await _friendsRepository.IsRequestSent(senderId, receiverId);
             if (isRequestSent)
             {
                 throw new Exception("It is not possible to send a friend request more than once.");
             }
 
-            var friendRequest = await _friendsRepository.SaveRequest(senderId, recieverId);
+            var friendRequest = await _friendsRepository.SaveRequest(senderId, receiverId);
             return friendRequest;
         }
     }
