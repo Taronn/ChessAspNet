@@ -1,4 +1,3 @@
-using Chess.API.Hubs;
 using Chess.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +34,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SendFriendRequest(int recieverId)
     {
-        var user = await _friendsService.SendFriendRequest(UserId, recieverId);
+        var user = await _friendsService.SendRequest(UserId, recieverId);
         return Ok(user);
     }
 }

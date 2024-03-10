@@ -8,6 +8,6 @@ namespace Chess.Application.Interfaces.Services
 {
     public interface IFriendsService
     {
-        Task<bool> SendFriendRequest(int senderId, int recieverId);
+        Task<FriendRequests> SendRequest(int senderId, int recieverId);
     }
 }

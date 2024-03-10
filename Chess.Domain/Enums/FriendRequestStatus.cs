@@ -1,6 +1,6 @@
 ﻿namespace Chess.Domain.Enums
 {
-    public enum FriendRequestStatusEnum
+    public enum FriendRequestStatus
     {
         Rejected = 0,
         Accepted = 1,
