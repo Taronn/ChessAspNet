@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Chess.Application.Interfaces.Services
 {
-    public interface IInviteService
+    public interface IFriendsService
     {
-        bool IsInGame(Guid fromId);
+        Task<FriendRequests> SendRequest(Guid senderId, Guid receiverId);
     }
 }

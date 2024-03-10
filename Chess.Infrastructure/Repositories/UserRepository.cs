@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
         await connection.CloseAsync();
     }
 
-    public async Task<User> FindAsync(int id)
+    public async Task<User> FindAsync(Guid id)
     {
         const string query = $"""
                              SELECT * 
