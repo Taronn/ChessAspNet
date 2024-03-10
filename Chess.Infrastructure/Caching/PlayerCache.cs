@@ -5,13 +5,8 @@ namespace Chess.Infrastructure.Caching;
 
 public class PlayerCache : IPlayerCache
 {
-    private readonly ConcurrentDictionary<int, Player> _players = new ConcurrentDictionary<int, Player>(
-        new[]
-        {
-        new KeyValuePair<int, Player>(1, new Player { Id = 1, Username = "Player1" }),
-        new KeyValuePair<int, Player>(2, new Player { Id = 2, Username = "Player2" }),
-        }
-    );
+    private readonly ConcurrentDictionary<int, Player> _players = new();
+    //petq e poxancvi players canky
 
 
     public Player Find(int id)

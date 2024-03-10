@@ -16,7 +16,7 @@ public class PlayerService : IPlayerService
     {
         throw new System.NotImplementedException();
     }
-    public Player[] GetAllPlayer()
+    public Player[] FindAll()
     {
         return _playerCache.FindAll();
     }

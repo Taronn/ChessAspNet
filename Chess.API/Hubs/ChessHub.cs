@@ -26,7 +26,7 @@ public class ChessHub : Hub
     public override async Task OnConnectedAsync()
     {
         Console.WriteLine("adasd");
-        Player[] GetPlayersList = _playerService.GetAllPlayer();
+        Player[] playersList = _playerService.FindAll();
 
         await Groups.AddToGroupAsync(Context.ConnectionId, Lobby);
         await Clients.User(UserId).SendAsync("GetPlayersList", "Hello from server!");
