@@ -1,5 +1,8 @@
+using Chess.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Chess.Domain.Entities;
+using System.ComponentModel;
 
 namespace Chess.API.Hubs;
 
@@ -8,6 +11,20 @@ public class ChessHub : Hub
 {
     private string UserId => Context.User!.FindFirst("Id")!.Value;
     private const string Lobby = "Lobby";
+    /*Guid guidId = Guid.Parse(UserId);
+    private Player Player => _playerService.GetPlayer(Context.UserIdentifier!)!;
+    private Game? Game => _gameService.GetGameByUserId(Player);*/
+    private readonly IGameService _gameService;
+    private readonly IPlayerService _playerService;
+
+
+    public ChessHub(IPlayerService playerService, IGameService gameService)
+    {
+        _playerService = playerService;
+        _gameService = gameService;
+    }
+
+
     public override async Task OnConnectedAsync()
     {
         System.Console.WriteLine("adasd");
