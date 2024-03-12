@@ -81,7 +81,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 var corsOptions = builder.Configuration.GetRequiredSection("Cors");
-app.UseCors(options => options.WithOrigins(corsOptions["AllowedOrigins"]!).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+app.UseCors(options => options.WithOrigins(corsOptions["AllowedOrigins"]!.Split(";")).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 
 app.UseAuthentication();
 app.UseAuthorization();

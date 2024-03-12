@@ -22,8 +22,18 @@ public class ChessHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, Lobby);
     }
 
+    // for testing purposes only - remove later
     public async Task Send(string message)
     {
         await Clients.All.SendAsync("Receive", message);
+    }
+
+    // for testing purposes only - remove later
+    public async Task MakeMove(string from, string to, string opponentId)
+    {
+        System.Console.WriteLine($"Move from {from} to {to} {opponentId}");
+        System.Console.WriteLine(opponentId);
+        System.Console.WriteLine(UserId);
+        await Clients.User(opponentId).SendAsync("MakeMove", from, to);
     }
 }
