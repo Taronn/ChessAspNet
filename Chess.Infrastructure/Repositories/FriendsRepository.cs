@@ -1,4 +1,6 @@
-﻿namespace Chess.Infrastructure.Repositories
+﻿using Chess.Domain.Enums;
+
+namespace Chess.Infrastructure.Repositories
 {
     internal class FriendsRepository : IFriendsRepository
     {
@@ -7,6 +9,19 @@
         public FriendsRepository(ISqlConnectionFactory sqlConnectionFactory)
         {
             _sqlConnectionFactory = sqlConnectionFactory;
+        }
+
+        public async Task<FriendRequests> GetRequest(Guid id)
+        {
+            await using var connection = _sqlConnectionFactory.Create();
+            var query = $"SELECT * FROM \"{nameof(FriendRequests)}\" " +
+                        $"WHERE \"{nameof(FriendRequests.Id)}\" = @id";
+            var param = new
+            {
+                id = id
+            };
+            var res = await connection.QueryFirstOrDefaultAsync<FriendRequests>(query, param);
+            return res;
         }
 
         public async Task<bool> IsFriends(Guid userId1, Guid userId2)
@@ -38,7 +53,7 @@
             var param = new
             {
                 senderId = senderId,
-                recieverId = receiverId
+                receiverId = receiverId
             };
 
             var count = await connection.ExecuteScalarAsync<int>(query, param);
@@ -61,6 +76,23 @@
             var res = await connection.QueryAsync<FriendRequests>(query, param);
             var first = res.FirstOrDefault();
             return first;
+        }
+
+        public async Task<bool> UpdateRequest(Guid requestId, FriendRequestStatus status)
+        {
+            await using var connection = _sqlConnectionFactory.Create();
+            var query = $"UPDATE \"{nameof(FriendRequests)}\" " +
+                        $"SET \"{nameof(FriendRequests.Status)}\" = @status " +
+                        $"WHERE \"{nameof(FriendRequests.Id)}\" = @requestId " +
+                        $"RETURNING *";
+            var param = new
+            {
+                status = status,
+                requestId = requestId
+            };
+
+            var count = await connection.ExecuteScalarAsync<int>(query, param);
+            return count > 0;
         }
     }
 }

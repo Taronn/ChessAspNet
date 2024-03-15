@@ -2,8 +2,8 @@
 {
     public enum FriendRequestStatus
     {
-        Rejected = 0,
-        Accepted = 1,
-        Pending = 2
+        rejected = 0,
+        accepted = 1,
+        pending = 2,
     }
 }
