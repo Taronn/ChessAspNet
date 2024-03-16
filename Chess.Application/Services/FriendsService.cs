@@ -1,5 +1,6 @@
 ﻿using Chess.Application.Interfaces.Repositories;
 using Chess.Application.Interfaces.Services;
+using Chess.Domain.Enums;
 
 namespace Chess.Application.Services
 {
@@ -39,6 +40,22 @@ namespace Chess.Application.Services
 
             var friendRequest = await _friendsRepository.SaveRequest(senderId, receiverId);
             return friendRequest;
+        }
+
+        public async Task<bool> UserResponse(Guid userId, Guid friendRequestId, FriendRequestStatus responseStatus)
+        {
+            var request = await _friendsRepository.GetRequest(friendRequestId);
+            if (request == null)
+            {
+                throw new Exception("Friend request is missing.");
+            }
+            if(request.ReceiverId != userId)
+            {
+                throw new Exception("You cannot answer this request"); 
+            }
+
+            var isUpdated = await _friendsRepository.UpdateRequest(request.Id, responseStatus);
+            return isUpdated;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Chess.Application.Interfaces.Services;
+using Chess.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,5 +26,13 @@ public class FriendsController : Controller
     {
         var user = await _friendsService.SendRequest(UserId, receiverId);
         return Ok(user);
+    }
+
+    [HttpPost("response")]
+    [Authorize]
+    public async Task<IActionResult> UserResponse(Guid friendRequestId, FriendRequestStatus responseStatus)
+    {
+        var res = await _friendsService.UserResponse(UserId,friendRequestId, responseStatus);
+        return Ok(res);
     }
 }
