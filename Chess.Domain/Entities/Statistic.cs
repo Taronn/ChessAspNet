@@ -6,6 +6,10 @@ public class Statistic
 {
     public Guid Id { get; set; }
     public GameType Type { get; set; }
+    public int TypeId
+    {
+        set => Type = (GameType)value;
+    }
     public int GamesPlayed { get; set; }
     public int Wins { get; set; }
     public int Losses { get; set; }

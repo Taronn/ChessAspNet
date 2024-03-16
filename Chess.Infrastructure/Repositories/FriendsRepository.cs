@@ -78,21 +78,21 @@ namespace Chess.Infrastructure.Repositories
             return first;
         }
 
-        public async Task<bool> UpdateRequest(Guid requestId, FriendRequestStatus status)
+        public async Task<FriendRequests> UpdateRequest(Guid requestId, FriendRequestStatus status)
         {
             await using var connection = _sqlConnectionFactory.Create();
             var query = $"UPDATE \"{nameof(FriendRequests)}\" " +
                         $"SET \"{nameof(FriendRequests.Status)}\" = @status " +
-                        $"WHERE \"{nameof(FriendRequests.Id)}\" = @requestId " +
-                        $"RETURNING *";
+                        $"WHERE \"{nameof(FriendRequests.Id)}\" = @requestId ";
             var param = new
             {
                 status = status,
                 requestId = requestId
             };
 
-            var count = await connection.ExecuteScalarAsync<int>(query, param);
-            return count > 0;
+            var res = await connection.QueryAsync<FriendRequests>(query, param);
+            var first = res.FirstOrDefault();
+            return first;
         }
     }
 }

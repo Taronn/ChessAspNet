@@ -15,6 +15,10 @@ namespace Chess.Domain.Entities
         public Player Receiver { get; set; }
         public Guid ReceiverId { get; set; }
         public FriendRequestStatus Status { get; set; }
+        public int StatusId
+        {
+            set => Status = (FriendRequestStatus)value;
+        }
         public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }

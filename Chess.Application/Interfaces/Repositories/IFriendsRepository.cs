@@ -9,7 +9,7 @@ namespace Chess.Application.Interfaces.Repositories
         Task<bool> IsRequestSent(Guid senderId, Guid receiverId);
         Task<bool> IsFriends(Guid userId1, Guid userId2);
         Task<FriendRequests> GetRequest(Guid id);
-        Task<bool> UpdateRequest(Guid requestId, FriendRequestStatus status);
+        Task<FriendRequests> UpdateRequest(Guid requestId, FriendRequestStatus status);
 
     }
 }

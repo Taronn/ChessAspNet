@@ -1,3 +1,4 @@
+using System.Net;
 using Chess.Application.Interfaces.Services;
 using Chess.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -24,15 +25,29 @@ public class FriendsController : Controller
     [Authorize]
     public async Task<IActionResult> SendFriendRequest(Guid receiverId)
     {
-        var user = await _friendsService.SendRequest(UserId, receiverId);
-        return Ok(user);
+        try
+        {
+            var friendRequest = await _friendsService.SendRequest(UserId, receiverId);
+            return Ok(friendRequest);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPost("response")]
     [Authorize]
     public async Task<IActionResult> UserResponse(Guid friendRequestId, FriendRequestStatus responseStatus)
     {
-        var res = await _friendsService.UserResponse(UserId,friendRequestId, responseStatus);
-        return Ok(res);
+        try
+        {
+            var friendRequest = await _friendsService.UserResponse(UserId, friendRequestId, responseStatus);
+            return Ok(friendRequest);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }

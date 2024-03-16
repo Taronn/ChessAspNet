@@ -14,6 +14,10 @@ public class User
     public string Picture { get; set; }
     public string Country { get; set; }
     public Gender Gender { get; set; }
+    public int GenderId
+    {
+        set => Gender = (Gender)value;
+    }
     public string Password { get; set; }
     public string GoogleId { get; set; }
     public string FacebookId { get; set; }

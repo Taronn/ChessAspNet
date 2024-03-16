@@ -42,7 +42,7 @@ namespace Chess.Application.Services
             return friendRequest;
         }
 
-        public async Task<bool> UserResponse(Guid userId, Guid friendRequestId, FriendRequestStatus responseStatus)
+        public async Task<FriendRequests> UserResponse(Guid userId, Guid friendRequestId, FriendRequestStatus responseStatus)
         {
             var request = await _friendsRepository.GetRequest(friendRequestId);
             if (request == null)
@@ -54,8 +54,8 @@ namespace Chess.Application.Services
                 throw new Exception("You cannot answer this request"); 
             }
 
-            var isUpdated = await _friendsRepository.UpdateRequest(request.Id, responseStatus);
-            return isUpdated;
+            var friendRequest = await _friendsRepository.UpdateRequest(request.Id, responseStatus);
+            return friendRequest;
         }
     }
 }

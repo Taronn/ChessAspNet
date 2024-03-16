@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Chess.Domain.Enums;
 
-namespace Chess.Domain.Enums
+public enum GameType
 {
-    public enum GameType
-    {
-        Rapid,
-        Blitz,
-        Bullet
-    }
+    Rapid = 1,
+    Blitz = 2,
+    Bullet = 3,
 }

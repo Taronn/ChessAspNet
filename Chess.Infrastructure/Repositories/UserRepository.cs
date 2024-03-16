@@ -1,3 +1,5 @@
+using Chess.Domain.Enums;
+
 namespace Chess.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository

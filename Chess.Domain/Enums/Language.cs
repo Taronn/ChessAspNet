@@ -2,7 +2,7 @@ namespace Chess.Domain.Enums;
 
 public enum Language
 {
-    Hy,
-    Ru,
-    En,
+    Hy = 1,
+    Ru = 2,
+    En = 3,
 }

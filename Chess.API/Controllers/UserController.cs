@@ -1,3 +1,4 @@
+using System.Net;
 using Chess.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Get(Guid id)
     {
         var user = await _userService.FindAsync(id);
-        return Ok(User.FindFirst("Username")?.Value);
+        return Ok(user);
     }
 }
