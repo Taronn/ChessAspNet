@@ -10,6 +10,6 @@ namespace Chess.Application.Interfaces.Services
     public interface IFriendsService
     {
         Task<FriendRequests> SendRequest(Guid senderId, Guid receiverId);
-        Task<bool> UserResponse(Guid friendRequestId, FriendRequestStatus responseStatus);
+        Task<bool> UserResponse(Guid userId,Guid friendRequestId, FriendRequestStatus responseStatus);
     }
 }

@@ -30,9 +30,9 @@ public class FriendsController : Controller
 
     [HttpPost("response")]
     [Authorize]
-    public async Task<IActionResult> UserResponse(Guid friendRquestId, FriendRequestStatus responseStatus)
+    public async Task<IActionResult> UserResponse(Guid friendRequestId, FriendRequestStatus responseStatus)
     {
-        var res = await _friendsService.UserResponse(friendRquestId, responseStatus);
+        var res = await _friendsService.UserResponse(UserId,friendRequestId, responseStatus);
         return Ok(res);
     }
 }
