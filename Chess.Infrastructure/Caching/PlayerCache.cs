@@ -6,6 +6,7 @@ namespace Chess.Infrastructure.Caching;
 public class PlayerCache : IPlayerCache
 {
     private readonly ConcurrentDictionary<int, Player> _players = new();
+  
 
     public Player Find(int id)
     {
@@ -16,7 +17,10 @@ public class PlayerCache : IPlayerCache
     {
         return _players.Values.ToArray();
     }
-
+    public bool IsInGame(int fromId)
+    {
+        return Find(fromId) == null;
+    }
     public void Add(Player player)
     {
         _players[player.Id] = player;

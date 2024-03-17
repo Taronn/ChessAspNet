@@ -17,11 +17,6 @@ namespace Chess.Application.Services
             _playerCache = playerCache;
         }
 
-        public bool IsInGame(int fromId)
-        {
-            return _playerCache.Find(fromId) == null;
-        }
-
         public Invite Create(int fromId, dynamic invite)
         {
             if (fromId == invite.ToId)
@@ -37,6 +32,9 @@ namespace Chess.Application.Services
                 newInvite.CreatedAt = DateTime.Now;
                 newInvite.From = _playerCache.Find(fromId);
                 newInvite.To = _playerCache.Find(invite.ToId);
+                newInvite.Type=invite.GameType;
+                newInvite.Timer=invite.Timer;
+                newInvite.TimerIncrement=invite.TimerIncrement;
                 _inviteCache.Add(newInvite);
                 return newInvite;
             }
