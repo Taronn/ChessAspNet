@@ -92,7 +92,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors(options => options.WithOrigins("https://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 app.UseHttpsRedirection();
 app.MapControllers();
 app.MapHub<ChessHub>("/chess-hub");

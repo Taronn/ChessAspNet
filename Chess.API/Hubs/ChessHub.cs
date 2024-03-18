@@ -3,20 +3,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Chess.Domain.Entities;
 using System.ComponentModel;
+using Chess.Application.Services;
 
 namespace Chess.API.Hubs;
 
-[Authorize]
-public class ChessHub : Hub
+/*[Authorize]
+*/public class ChessHub : Hub
 {
-    private string UserId => Context.User!.FindFirst("Id")!.Value;
+    private Guid UserId => Guid.Parse(Context.User!.FindFirst("Id")!.Value);
     private const string Lobby = "Lobby";
-    /*Guid guidId = Guid.Parse(UserId);
-    private Player Player => _playerService.GetPlayer(Context.UserIdentifier!)!;
-    private Game? Game => _gameService.GetGameByUserId(Player);*/
     private readonly IGameService _gameService;
     private readonly IPlayerService _playerService;
-
 
     public ChessHub(IPlayerService playerService, IGameService gameService)
     {
@@ -27,16 +24,20 @@ public class ChessHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        System.Console.WriteLine("adasd");
-
+        Console.WriteLine("User");
+        Game game = _gameService.Find(UserId);
+        Player player = await _playerService.Join(UserId, game);
+        Console.WriteLine(player.Username+ "Connected");
         await Groups.AddToGroupAsync(Context.ConnectionId, Lobby);
-        await Clients.User(UserId).SendAsync("GetPlayersList", "Hello from server!");
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", player.Username+"Connected");
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        System.Console.WriteLine("Disconnected");
+        Player player = _playerService.Find(UserId);
+        Console.WriteLine(player.Username+"Disconnected");
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, Lobby);
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", player.Username + "Disconnected");
     }
 
     // for testing purposes only - remove later

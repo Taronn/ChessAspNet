@@ -14,8 +14,14 @@ public class GameService : IGameService
         _gameCache = gameCache;
     }
 
-    public Game GetGameByUserId(Guid id)
+    public Game Find(Guid id)
     {
         return _gameCache.Find(id);
+    }
+    public Game Add(Game game)
+    {
+        
+        _gameCache.Add(game);
+        return game;
     }
 }
