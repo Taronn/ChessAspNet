@@ -11,7 +11,12 @@ public class PlayerService : IPlayerService
     {
         _gameCache = gameCache;
     }
-    
+
+    public bool IsInGame(int fromId)
+    {
+      return _gameCache.FindById(fromId)!=null;
+    }
+
     public void Join(int playerId)
     {
         throw new System.NotImplementedException();
