@@ -4,4 +4,5 @@ public interface IUserRepository
 {
     void AddAsync(User user);
     Task<User> FindAsync(Guid id);
+    Task<Player> FindPlayerAsync(Guid id);
 }

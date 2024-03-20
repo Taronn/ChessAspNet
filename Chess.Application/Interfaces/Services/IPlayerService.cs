@@ -2,6 +2,9 @@ namespace Chess.Application.Interfaces.Services;
 
 public interface IPlayerService
 {
-    Player GetPlayer(Guid id);
-    void Join(int playerId);
+    Player Find(Guid id);
+    Task<Player> Join(Guid playerId);
+    Player[] FindAll();
+    void Remove(Guid id);
+
 }

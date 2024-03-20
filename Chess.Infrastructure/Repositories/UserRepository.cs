@@ -39,4 +39,49 @@ public class UserRepository : IUserRepository
             splitOn: "Id");
         return user.FirstOrDefault();
     }
+
+    public async Task<Player> FindPlayerAsync(Guid id)
+    {
+        const string query = @"
+                        SELECT *
+                        FROM ""Users""
+                        LEFT JOIN ""Statistics"" ON ""Users"".""Id"" = ""Statistics"".""UserId""
+                        WHERE ""Users"".""Id"" = @Id
+                        ";
+        var param = new { Id = id };
+        await using var connection = _sqlConnectionFactory.Create();
+        var playerDictionary = new Dictionary<Guid, Player>();
+        var player = await connection.QueryAsync<User, Statistic, Player>(
+            query,
+            (user, statistic) =>
+            {
+                if (!playerDictionary.TryGetValue(user.Id, out var currentPlayer))
+                {
+                    currentPlayer = new Player
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Gender = user.Gender,
+                        Country = user.Country,
+                        Picture = user.Picture,
+                        Statistics = new List<Statistic>()
+                    };
+                    playerDictionary.Add(user.Id, currentPlayer);
+                }
+
+                if (statistic != null)
+                {
+                    currentPlayer.Statistics.Add(statistic);
+                }
+
+                return currentPlayer;
+            },
+            param,
+            splitOn: "Id"
+        );
+
+        return player.FirstOrDefault();
+    }
 }

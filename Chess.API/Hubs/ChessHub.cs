@@ -9,11 +9,7 @@ namespace Chess.API.Hubs;
 [Authorize]
 public class ChessHub : Hub
 {
-    private string UserId => Context.User!.FindFirst("Id")!.Value;
-    private const string Lobby = "Lobby";
-    /*Guid guidId = Guid.Parse(UserId);
-    private Player Player => _playerService.GetPlayer(Context.UserIdentifier!)!;
-    private Game? Game => _gameService.GetGameByUserId(Player);*/
+    private Guid UserId => Guid.Parse(Context.User!.FindFirst("Id")!.Value);
     private readonly IGameService _gameService;
     private readonly IPlayerService _playerService;
 
@@ -27,16 +23,36 @@ public class ChessHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        System.Console.WriteLine("adasd");
-
-        await Groups.AddToGroupAsync(Context.ConnectionId, Lobby);
-        await Clients.User(UserId).SendAsync("GetPlayersList", "Hello from server!");
+/*        Game game = _gameService.Find(UserId);
+ *      
+*/      Player player = await _playerService.Join(UserId);
+        Player[] players = _playerService.FindAll();
+        Console.WriteLine(player.Username+"Connected");
+        for(int i=0;i< _playerService.FindAll().Length; i++)
+        {
+            Console.WriteLine(players[i].Username);
+        }
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "User");
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        System.Console.WriteLine("Disconnected");
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, Lobby);
+        Player player = _playerService.Find(UserId);
+        Player[] players = _playerService.FindAll();
+        Console.WriteLine();
+        Console.WriteLine(player.Username + "Disconnected");
+        _playerService.Remove(UserId);
+        for (int i = 0; i < _playerService.FindAll().Length; i++)
+        {
+            Console.WriteLine(players[i].Username);
+        }
+        if (_playerService.FindAll().Length==0)
+        {
+            Console.WriteLine("User chka");
+            Console.WriteLine();
+        }
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "User");
+
     }
 
     // for testing purposes only - remove later
