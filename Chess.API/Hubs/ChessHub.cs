@@ -25,33 +25,16 @@ public class ChessHub : Hub
     {
 /*        Game game = _gameService.Find(UserId);
  *      
-*/      Player player = await _playerService.Join(UserId);
+*/     
         Player[] players = _playerService.FindAll();
-        Console.WriteLine(player.Username+"Connected");
-        for(int i=0;i< _playerService.FindAll().Length; i++)
-        {
-            Console.WriteLine(players[i].Username);
-        }
-        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "User");
+        Player player = await _playerService.Join(UserId);
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", players);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        Player player = _playerService.Find(UserId);
-        Player[] players = _playerService.FindAll();
-        Console.WriteLine();
-        Console.WriteLine(player.Username + "Disconnected");
         _playerService.Remove(UserId);
-        for (int i = 0; i < _playerService.FindAll().Length; i++)
-        {
-            Console.WriteLine(players[i].Username);
-        }
-        if (_playerService.FindAll().Length==0)
-        {
-            Console.WriteLine("User chka");
-            Console.WriteLine();
-        }
-        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "User");
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "Users");
 
     }
 

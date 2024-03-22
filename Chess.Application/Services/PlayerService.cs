@@ -21,7 +21,7 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> Join(Guid playerId)
     {
-        Player? player = await _userRepository.FindPlayerAsync(playerId);
+        Player player = await _userRepository.FindPlayerAsync(playerId);
         _playerCache.Add(player);
         return player;
     }

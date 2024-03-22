@@ -20,7 +20,7 @@ namespace Chess.Application.Services
                 throw new Exception("ERROR");
             }
 
-            var user = await _userRepository.FindAsync(receiverId);
+            var user = await _userRepository.FindPlayerAsync(receiverId);
             if (user == null)
             {
                 throw new Exception("User is not exists");

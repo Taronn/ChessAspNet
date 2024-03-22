@@ -12,8 +12,8 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
     
-    public Task<User> FindAsync(Guid id)
+    public Task<Player> FindAsync(Guid id)
     {
-        return _userRepository.FindAsync(id);
+        return _userRepository.FindPlayerAsync(id);
     }
 }
