@@ -1,7 +1,7 @@
 namespace Chess.Application.Interfaces.Repositories;
 
-public interface IUserRepository
+public interface IPlayerRepository
 {
     void AddAsync(User user);
-    Task<Player> FindPlayerAsync(Guid id);
+    Task<Player> FindAsync(Guid id);
 }

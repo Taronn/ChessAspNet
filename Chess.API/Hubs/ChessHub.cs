@@ -35,6 +35,7 @@ public class ChessHub : Hub
     {
         _playerService.Remove(UserId);
         await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "Users");
+        await Clients.Others.SendAsync("PlayerLeave", UserId);
 
     }
 

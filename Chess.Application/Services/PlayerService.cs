@@ -7,11 +7,11 @@ namespace Chess.Application.Services;
 public class PlayerService : IPlayerService
 {
     private readonly IPlayerCache _playerCache;
-    private readonly IUserRepository _userRepository;
-    public PlayerService(IPlayerCache playerCache, IUserRepository userRepository)
+    private readonly IPlayerRepository _playerRepository;
+    public PlayerService(IPlayerCache playerCache, IPlayerRepository playerRepository)
     {
         _playerCache = playerCache;
-        _userRepository = userRepository;
+        _playerRepository = playerRepository;
     }
 
     public Player Find(Guid id)
@@ -21,7 +21,7 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> Join(Guid playerId)
     {
-        Player player = await _userRepository.FindPlayerAsync(playerId);
+        Player player = await _playerRepository.FindAsync(playerId);
         _playerCache.Add(player);
         return player;
     }

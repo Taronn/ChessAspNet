@@ -7,11 +7,11 @@ namespace Chess.Application.Services
     public class FriendsService : IFriendsService
     {
         private readonly IFriendsRepository _friendsRepository;
-        private readonly IUserRepository _userRepository;
-        public FriendsService(IFriendsRepository friendsRepository, IUserRepository userRepository)
+        private readonly IPlayerRepository _playerRepository;
+        public FriendsService(IFriendsRepository friendsRepository, IPlayerRepository playerRepository)
         {
             this._friendsRepository = friendsRepository;
-            this._userRepository = userRepository;
+            this._playerRepository = playerRepository;
         }
         public async Task<FriendRequests> SendRequest(Guid senderId, Guid receiverId)
         {
@@ -20,7 +20,7 @@ namespace Chess.Application.Services
                 throw new Exception("ERROR");
             }
 
-            var user = await _userRepository.FindPlayerAsync(receiverId);
+            var user = await _playerRepository.FindAsync(receiverId);
             if (user == null)
             {
                 throw new Exception("User is not exists");
@@ -42,7 +42,7 @@ namespace Chess.Application.Services
             return friendRequest;
         }
 
-        public async Task<FriendRequests> UserResponse(Guid userId, Guid friendRequestId, FriendRequestStatus responseStatus)
+        public async Task<FriendRequests> PlayerResponse(Guid userId, Guid friendRequestId, FriendRequestStatus responseStatus)
         {
             var request = await _friendsRepository.GetRequest(friendRequestId);
             if (request == null)

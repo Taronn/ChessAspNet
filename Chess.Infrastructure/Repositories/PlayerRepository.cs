@@ -2,11 +2,11 @@ using Chess.Domain.Enums;
 
 namespace Chess.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class PlayerRepository : IPlayerRepository
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
     
-    public UserRepository(ISqlConnectionFactory sqlConnectionFactory)
+    public PlayerRepository(ISqlConnectionFactory sqlConnectionFactory)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
     }
@@ -20,7 +20,7 @@ public class UserRepository : IUserRepository
         await connection.CloseAsync();
     }
 
-    public async Task<Player> FindPlayerAsync(Guid id)
+    public async Task<Player> FindAsync(Guid id)
     {
         const string query = @"
                         SELECT *

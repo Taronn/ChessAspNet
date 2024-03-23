@@ -23,6 +23,6 @@ public class PlayerCache : IPlayerCache
     }
     public void Remove(Guid id)
     {
-        _cache.Remove(id, out _);
+        _cache.TryRemove(id, out _);
     }
 }

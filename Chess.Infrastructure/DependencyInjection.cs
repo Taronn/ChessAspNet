@@ -12,7 +12,7 @@ public static class DependencyInjection
         // Factories
         services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
         // Repositories
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IFriendsRepository, FriendsRepository>();
         // Caching
         services.AddSingleton<IGameCache, GameCache>();
