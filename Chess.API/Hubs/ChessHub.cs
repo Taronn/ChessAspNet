@@ -29,12 +29,12 @@ public class ChessHub : Hub
         Player[] players = _playerService.FindAll();
         Player player = await _playerService.Join(UserId);
         await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", players);
+        await Clients.Others.SendAsync("PlayerJoin", player);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
         _playerService.Remove(UserId);
-        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", "Users");
         await Clients.Others.SendAsync("PlayerLeave", UserId);
 
     }
