@@ -10,14 +10,14 @@ public class FriendsController : Controller
 {
     private Guid UserId => Guid.Parse(User.FindFirst("Id")!.Value);
 
-    private readonly IUserService _userService;
+    private readonly IPlayerService _playerService;
     private readonly IFriendsService _friendsService;
 
     public FriendsController(
-        IUserService userService,
+        IPlayerService playerService,
         IFriendsService friendsService)
     {
-        _userService = userService;
+        _playerService = playerService;
         _friendsService = friendsService;
     }
 
@@ -42,7 +42,7 @@ public class FriendsController : Controller
     {
         try
         {
-            var friendRequest = await _friendsService.UserResponse(UserId, friendRequestId, responseStatus);
+            var friendRequest = await _friendsService.PlayerResponse(UserId, friendRequestId, responseStatus);
             return Ok(friendRequest);
         }
         catch (Exception e)

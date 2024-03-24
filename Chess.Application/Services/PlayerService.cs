@@ -7,19 +7,30 @@ namespace Chess.Application.Services;
 public class PlayerService : IPlayerService
 {
     private readonly IPlayerCache _playerCache;
-
-    public PlayerService(IPlayerCache playerCache)
+    private readonly IPlayerRepository _playerRepository;
+    public PlayerService(IPlayerCache playerCache, IPlayerRepository playerRepository)
     {
         _playerCache = playerCache;
+        _playerRepository = playerRepository;
     }
 
-    public Player GetPlayer(Guid id)
+    public Player Find(Guid id)
     {
         return _playerCache.Find(id);
     }
 
-    public void Join(int playerId)
+    public async Task<Player> Join(Guid playerId)
     {
-        throw new System.NotImplementedException();
+        Player player = await _playerRepository.FindAsync(playerId);
+        _playerCache.Add(player);
+        return player;
+    }
+    public Player[] FindAll()
+    {
+        return _playerCache.FindAll();
+    }
+    public void Remove(Guid id)
+    {
+        _playerCache.Remove(id);
     }
 }

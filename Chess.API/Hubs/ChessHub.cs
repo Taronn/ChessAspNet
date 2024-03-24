@@ -9,11 +9,7 @@ namespace Chess.API.Hubs;
 [Authorize]
 public class ChessHub : Hub
 {
-    private string UserId => Context.User!.FindFirst("Id")!.Value;
-    private const string Lobby = "Lobby";
-    /*Guid guidId = Guid.Parse(UserId);
-    private Player Player => _playerService.GetPlayer(Context.UserIdentifier!)!;
-    private Game? Game => _gameService.GetGameByUserId(Player);*/
+    private Guid UserId => Guid.Parse(Context.User!.FindFirst("Id")!.Value);
     private readonly IGameService _gameService;
     private readonly IPlayerService _playerService;
 
@@ -27,16 +23,20 @@ public class ChessHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        System.Console.WriteLine("adasd");
-
-        await Groups.AddToGroupAsync(Context.ConnectionId, Lobby);
-        await Clients.User(UserId).SendAsync("GetPlayersList", "Hello from server!");
+/*        Game game = _gameService.Find(UserId);
+ *      
+*/     
+        Player[] players = _playerService.FindAll();
+        Player player = await _playerService.Join(UserId);
+        await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", players);
+        await Clients.Others.SendAsync("PlayerJoin", player);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        System.Console.WriteLine("Disconnected");
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, Lobby);
+        _playerService.Remove(UserId);
+        await Clients.Others.SendAsync("PlayerLeave", UserId);
+
     }
 
     // for testing purposes only - remove later

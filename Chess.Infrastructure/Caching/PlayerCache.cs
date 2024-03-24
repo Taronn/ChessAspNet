@@ -21,4 +21,8 @@ public class PlayerCache : IPlayerCache
     {
         _cache[player.Id] = player;
     }
+    public void Remove(Guid id)
+    {
+        _cache.TryRemove(id, out _);
+    }
 }
