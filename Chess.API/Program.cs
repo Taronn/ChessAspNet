@@ -21,6 +21,9 @@ builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddSignalR(hubOptions =>
 {
     hubOptions.EnableDetailedErrors = true;
+}).AddJsonProtocol(options => 
+{
+    options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
