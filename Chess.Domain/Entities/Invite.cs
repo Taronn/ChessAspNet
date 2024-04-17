@@ -8,7 +8,9 @@ public class Invite:GameConfiguration
     public Guid FromId { get; set; }
     public Player To { get; set; }
     public Guid ToId { get; set; }
+    public string Message { get; set; }
     public Color FromColor { get; set; }
     public Color ToColor { get; set; }
-    public DateTime CreatedAt { get; set; }= DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
 }

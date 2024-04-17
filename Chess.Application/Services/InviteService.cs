@@ -2,7 +2,9 @@
 using Chess.Application.Interfaces.Repositories;
 using Chess.Application.Interfaces.Services;
 using Chess.Domain.Entities;
+using System.Text.Json;
 using System;
+using Chess.Domain.Enums;
 
 namespace Chess.Application.Services
 {
@@ -21,24 +23,50 @@ namespace Chess.Application.Services
         {
             return _playerCache.Find(fromId) == null;
         }
-
-        public Invite Create(Guid fromId, dynamic invite)
+        public Invite Find(Player player)
         {
-            if (fromId == invite.ToId)
+            if (player.Invite.FromId == Guid.Empty)
+            {
+                return null;
+            }
+            return _inviteCache.Find(player.Invite.FromId);
+        }
+
+    /*    public Invite Remove(Player player)
+        {
+            Invite invite = _inviteCache.Remove(player.Invite.FromId);
+            player.ChallengeId = Guid.Empty;
+            return challenge;
+        }*/
+
+        public Invite Save(Guid fromId,Guid toId, Invite invite)
+        {
+
+            switch (invite.FromColor)
+            {
+                case Color.White:
+                    invite.ToColor = Color.Black;
+                    break;
+                case Color.Black:
+                    invite.ToColor = Color.White;
+                    break;
+                default:
+                    throw new ArgumentException("Wrong color");
+            }
+
+            if (fromId == toId)
             {
                 throw new ArgumentException("FromID=inviteID");
-                
+
             }
             try
             {
-                Invite newInvite = new Invite();
-                newInvite.FromId = fromId;
-                newInvite.ToId = invite.ToId;
-                newInvite.CreatedAt = DateTime.Now;
-                newInvite.From = _playerCache.Find(fromId);
-                newInvite.To = _playerCache.Find(invite.ToId);
-                _inviteCache.Add(newInvite);
-                return newInvite;
+                invite.FromId = fromId;
+                invite.ToId = toId;
+                invite.From = _playerCache.Find(fromId);
+                invite.To = _playerCache.Find(toId);
+                _inviteCache.Add(invite);
+                return invite;
             }
             catch
             {

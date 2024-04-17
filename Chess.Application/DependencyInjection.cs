@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IPlayerService, PlayerService>();
         services.AddScoped<IFriendsService, FriendsService>();
+        services.AddScoped<IInviteService, InviteService>();
         return services;
     }
 }
