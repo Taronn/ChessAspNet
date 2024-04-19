@@ -6,11 +6,22 @@ using System.ComponentModel;
 using Chess.Domain.Enums;
 using System.Text.Json;
 using System;
+using static Chess.Application.Services.InviteService;
 namespace Chess.API.Hubs;
 
 [Authorize]
 public class ChessHub : Hub
 {
+    private Player Player => _playerService.Find(UserId);
+/*    private Player Opponent => _gameService.GetOpponent(Player);
+*/    private Player Inviter => _inviteService.FindInviter(UserId);
+/*    private Game Game => _gameService.Find(Player);
+*/    private Invite Invite => _inviteService.FindInvite(Player);
+/*    private IEnumerable<PlayerDto> AvailablePlayers => _playerService.GetAvailablePlayers();
+*/    
+
+
+
     private Guid UserId => Guid.Parse(Context.User!.FindFirst("Id")!.Value);
     private readonly IGameService _gameService;
     private readonly IPlayerService _playerService;
@@ -44,6 +55,38 @@ public class ChessHub : Hub
         _playerService.Remove(UserId);
         await Clients.Others.SendAsync("PlayerLeave", UserId);
 
+    }
+
+    public async Task AcceptChallenge()
+    {
+        InviteResult result = _inviteService.AcceptChallenge(Player,UserId);
+
+        switch (result)
+        {
+            case InviteResult.NoChallengeExists:
+                await Clients.Caller.SendAsync("ChallengeError", "Challenge does not exist.");
+                break;
+
+            case InviteResult.ChallengerOffline:
+                await Clients.Caller.SendAsync("ChallengeError", "Challenger is offline.");
+                break;
+
+            case InviteResult.ChallengerAlreadyInGame:
+                await Clients.Caller.SendAsync("ChallengeError", "Challenger is already in a game.");
+                break;
+
+            case InviteResult.Success:
+/*                await Clients.Users(Game!.WhitePlayer.Id, Game.BlackPlayer.Id).SendAsync("ChallengeAccepted", Game.Id, Game.WhitePlayer.Username, Game.BlackPlayer.Username);
+*//*                await Clients.Users(AvailablePlayers.Select(p => p.Id)).SendAsync("GameStarted", Game.WhitePlayer, Game.BlackPlayer);
+*/                break;
+        }
+
+    }
+    public async Task RejectChallenge(string toId)
+    {
+        Guid ToId = Guid.Parse(toId);
+        _inviteService.RemoveInvite(ToId);
+        await Clients.User(toId).SendAsync("InviteRejected", Player.Username);
     }
 
     // for testing purposes only - remove later

@@ -23,7 +23,7 @@ namespace Chess.Application.Services
         {
             return _playerCache.Find(fromId) == null;
         }
-        public Invite Find(Player player)
+        public Invite FindInvite(Player player)
         {
             if (player.Invite.FromId == Guid.Empty)
             {
@@ -32,12 +32,10 @@ namespace Chess.Application.Services
             return _inviteCache.Find(player.Invite.FromId);
         }
 
-    /*    public Invite Remove(Player player)
+        public void RemoveInvite(Guid toId)
         {
-            Invite invite = _inviteCache.Remove(player.Invite.FromId);
-            player.ChallengeId = Guid.Empty;
-            return challenge;
-        }*/
+            _inviteCache.Remove(toId);
+        }
 
         public Invite Save(Guid fromId,Guid toId, Invite invite)
         {
@@ -73,6 +71,45 @@ namespace Chess.Application.Services
                 throw new ArgumentException("Cannot create new Invite");
             }
 
+        }
+        public Player FindInviter(Guid fromId)
+        {
+            
+            return _playerCache.Find(fromId);
+        }
+        public InviteResult AcceptChallenge(Player player,Guid fromId)
+        {
+            Invite invite = FindInvite(player);
+            Player inviter = FindInviter(fromId);
+            if (invite == null)
+            {
+                return InviteResult.NoChallengeExists;
+            }
+            if (inviter == null)
+            {
+                return InviteResult.ChallengerOffline;
+            }
+            /*if (inviter.GameId != Guid.Empty)
+            {
+                return ChallengeResult.ChallengerAlreadyInGame;
+            }*/
+
+           /* player.ChallengeId = Guid.Empty;
+            _gameService.CreateGame(challenge);*/
+            return InviteResult.Success;
+        }
+
+        public Invite Find(Player player)
+        {
+            throw new NotImplementedException();
+        }
+
+        public enum InviteResult
+        {
+            Success,
+            NoChallengeExists,
+            ChallengerOffline,
+            ChallengerAlreadyInGame,
         }
     }
 }
