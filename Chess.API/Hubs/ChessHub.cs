@@ -39,10 +39,11 @@ public class ChessHub : Hub
 
     }
 
-    // for testing purposes only - remove later
-    public async Task Send(string message)
+    public async Task SendMessage(string message)
     {
-        await Clients.All.SendAsync("Receive", message);
+        var player = _playerService.Find(UserId);
+        // Broadcast the received message to all clients
+        await Clients.Others.SendAsync("ReceiveMessage", player, message);
     }
 
     // for testing purposes only - remove later
