@@ -9,13 +9,9 @@ namespace Chess.Application.Interfaces.Services
 {
     public interface IInviteService
     {
-        bool IsInGame(Guid fromId);
-        void RemoveInvite(Guid toId);
-        Invite FindInvite(Player player);
-
-        Invite Save(Guid fromId,Guid toID, Invite invite);
-        Player FindInviter(Guid fromId);
-        public InviteResult AcceptChallenge(Player player, Guid fromId);
+        Invite Reject(Guid toId);
+        Invite Save(Guid fromId, Invite invite);
+        Game Accept(Guid toId);
 
     }
 }

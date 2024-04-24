@@ -12,104 +12,65 @@ namespace Chess.Application.Services
     {
         private readonly IInviteCache _inviteCache;
         private readonly IPlayerCache _playerCache;
+        private readonly IGameCache _gameCache;
+        private readonly IGameService _gameService;
 
-        public InviteService(IInviteCache inviteCache, IPlayerCache playerCache)
+        public InviteService(IInviteCache inviteCache, IPlayerCache playerCache, IGameCache gameCache, IGameService gameService)
         {
             _inviteCache = inviteCache;
             _playerCache = playerCache;
+            _gameCache = gameCache;
+            _gameService = gameService;
         }
-
-        public bool IsInGame(Guid fromId)
+        public Invite Reject(Guid toId)
         {
-            return _playerCache.Find(fromId) == null;
-        }
-        public Invite FindInvite(Player player)
-        {
-            if (player.Invite.FromId == Guid.Empty)
-            {
-                return null;
-            }
-            return _inviteCache.Find(player.Invite.FromId);
-        }
-
-        public void RemoveInvite(Guid toId)
-        {
+            Invite invite = _inviteCache.Find(toId);
             _inviteCache.Remove(toId);
+            return invite;
         }
 
-        public Invite Save(Guid fromId,Guid toId, Invite invite)
+        public Invite Save(Guid fromId, Invite invite)
         {
-
-            switch (invite.FromColor)
+            if (fromId == invite.ToId)
             {
-                case Color.White:
-                    invite.ToColor = Color.Black;
-                    break;
-                case Color.Black:
-                    invite.ToColor = Color.White;
-                    break;
-                default:
-                    throw new ArgumentException("Wrong color");
-            }
-
-            if (fromId == toId)
+                throw new Exception();
+            } 
+            Game game=_gameCache.Find(invite.ToId);
+            Player to = _playerCache.Find(invite.ToId);
+            if (game != null || to == null)
             {
-                throw new ArgumentException("FromID=inviteID");
-
+                throw new Exception();
             }
-            try
+            invite.FromId = fromId;
+            invite.From = _playerCache.Find(fromId);
+            invite.To = to;
+            invite.ToColor = invite.FromColor==Color.White?Color.Black:Color.White;
+            if (invite.Timer < 3)
             {
-                invite.FromId = fromId;
-                invite.ToId = toId;
-                invite.From = _playerCache.Find(fromId);
-                invite.To = _playerCache.Find(toId);
-                _inviteCache.Add(invite);
-                return invite;
+                invite.TypeId = (int)GameType.Bullet;
             }
-            catch
+            else if (invite.Timer < 10)
             {
-                throw new ArgumentException("Cannot create new Invite");
+                invite.TypeId = (int)GameType.Blitz;
             }
-
+            else
+            {
+                invite.TypeId = (int)GameType.Rapid;
+            }
+            _inviteCache.Add(invite);
+            return invite;
         }
-        public Player FindInviter(Guid fromId)
+        public Game Accept(Guid toId)
         {
-            
-            return _playerCache.Find(fromId);
-        }
-        public InviteResult AcceptChallenge(Player player,Guid fromId)
-        {
-            Invite invite = FindInvite(player);
-            Player inviter = FindInviter(fromId);
-            if (invite == null)
+            Invite invite = _inviteCache.Find(toId);
+            Player inviter = _playerCache.Find(toId);
+            if (invite == null || inviter == null || inviter.Game != null)
             {
-                return InviteResult.NoChallengeExists;
+                throw new Exception();
             }
-            if (inviter == null)
-            {
-                return InviteResult.ChallengerOffline;
-            }
-            /*if (inviter.GameId != Guid.Empty)
-            {
-                return ChallengeResult.ChallengerAlreadyInGame;
-            }*/
+            Game game = _gameService.Create(invite);
 
-           /* player.ChallengeId = Guid.Empty;
-            _gameService.CreateGame(challenge);*/
-            return InviteResult.Success;
-        }
-
-        public Invite Find(Player player)
-        {
-            throw new NotImplementedException();
-        }
-
-        public enum InviteResult
-        {
-            Success,
-            NoChallengeExists,
-            ChallengerOffline,
-            ChallengerAlreadyInGame,
+            return game;
         }
     }
 }

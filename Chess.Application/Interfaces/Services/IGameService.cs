@@ -2,5 +2,7 @@ namespace Chess.Application.Interfaces.Services;
 
 public interface IGameService
 {
-    Game GetGameByUserId(Guid id);
+    Game Create(Invite invite);
+    Game Find(Guid id);
+    void Remove(Guid id);
 }

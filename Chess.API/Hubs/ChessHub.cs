@@ -2,44 +2,39 @@ using Chess.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Chess.Domain.Entities;
+using Chess.Application.Interfaces.Caching;
 using System.ComponentModel;
-using Chess.Domain.Enums;
-using System.Text.Json;
-using System;
-using static Chess.Application.Services.InviteService;
 namespace Chess.API.Hubs;
 
 [Authorize]
 public class ChessHub : Hub
 {
-    private Player Player => _playerService.Find(UserId);
-/*    private Player Opponent => _gameService.GetOpponent(Player);
-*/    private Player Inviter => _inviteService.FindInviter(UserId);
-/*    private Game Game => _gameService.Find(Player);
-*/    private Invite Invite => _inviteService.FindInvite(Player);
-/*    private IEnumerable<PlayerDto> AvailablePlayers => _playerService.GetAvailablePlayers();
-*/    
-
-
-
     private Guid UserId => Guid.Parse(Context.User!.FindFirst("Id")!.Value);
     private readonly IGameService _gameService;
     private readonly IPlayerService _playerService;
     private readonly IInviteService _inviteService;
+    private readonly IInviteCache _inviteCache;
 
-
-    public ChessHub(IPlayerService playerService, IGameService gameService, IInviteService inviteService)
+    public ChessHub(IPlayerService playerService, IGameService gameService, IInviteService inviteService, IInviteCache inviteCache)
     {
         _playerService = playerService;
         _gameService = gameService;
-        _inviteService=inviteService;
+        _inviteService = inviteService;
+        _inviteCache = inviteCache;
     }
 
-    public async Task InvitePLayer(string toId,Invite invite)
+    public async Task InvitePlayer(Invite invite)
     {
-        Guid ToId=Guid.Parse(toId);
-        Invite newInvite = _inviteService.Save(UserId, ToId, invite);
-        await Clients.User(toId).SendAsync("InviteReceived", newInvite);
+        try
+        {
+            _inviteService.Save(UserId,invite);
+            Invite newInvite = _inviteCache.Find(invite.ToId);
+            await Clients.User(invite.ToId.ToString()).SendAsync("InviteReceived", newInvite);
+        }
+        catch
+        {
+            await Clients.User(UserId.ToString()).SendAsync("Error", "INVITE_PLAYER");
+        }
     }
 
     public override async Task OnConnectedAsync()
@@ -54,39 +49,25 @@ public class ChessHub : Hub
     {
         _playerService.Remove(UserId);
         await Clients.Others.SendAsync("PlayerLeave", UserId);
-
     }
 
-    public async Task AcceptChallenge()
+    public async Task AcceptInvite()
     {
-        InviteResult result = _inviteService.AcceptChallenge(Player,UserId);
-
-        switch (result)
+        try
         {
-            case InviteResult.NoChallengeExists:
-                await Clients.Caller.SendAsync("ChallengeError", "Challenge does not exist.");
-                break;
-
-            case InviteResult.ChallengerOffline:
-                await Clients.Caller.SendAsync("ChallengeError", "Challenger is offline.");
-                break;
-
-            case InviteResult.ChallengerAlreadyInGame:
-                await Clients.Caller.SendAsync("ChallengeError", "Challenger is already in a game.");
-                break;
-
-            case InviteResult.Success:
-/*                await Clients.Users(Game!.WhitePlayer.Id, Game.BlackPlayer.Id).SendAsync("ChallengeAccepted", Game.Id, Game.WhitePlayer.Username, Game.BlackPlayer.Username);
-*//*                await Clients.Users(AvailablePlayers.Select(p => p.Id)).SendAsync("GameStarted", Game.WhitePlayer, Game.BlackPlayer);
-*/                break;
+            Game game = _inviteService.Accept(UserId);
+            await Clients.Users(game.WhitePlayerId.ToString(),game.BlackPlayerId.ToString()).SendAsync("StartGame", game);
+            await Clients.All.SendAsync("GameStarted", game);
         }
-
+        catch
+        {
+            await Clients.User(UserId.ToString()).SendAsync("Error", "ACCEPT_INVITE");
+        }
     }
-    public async Task RejectChallenge(string toId)
+    public async Task RejectInvite()
     {
-        Guid ToId = Guid.Parse(toId);
-        _inviteService.RemoveInvite(ToId);
-        await Clients.User(toId).SendAsync("InviteRejected", Player.Username);
+        Invite invite = _inviteService.Reject(UserId);
+        await Clients.User(UserId.ToString()).SendAsync("InviteRejected", invite);
     }
 
     // for testing purposes only - remove later
@@ -103,4 +84,26 @@ public class ChessHub : Hub
         System.Console.WriteLine(UserId);
         await Clients.User(opponentId).SendAsync("MakeMove", from, to);
     }
+    /*public async Task MakeMove(string from, string to)
+    {
+        if (Game == null)
+        {
+            return;
+        }
+
+        MoveResultType moveResult = _gameService.MakeMove(Player, Game, from, to);
+        switch (moveResult)
+        {
+            case MoveResultType.ValidMove:
+                await Clients.User(Opponent?.Id ?? "").SendAsync("MakeMove", from, to);
+                break;
+            case MoveResultType.EndGame:
+                await Clients.User(Opponent?.Id ?? "").SendAsync("MakeMove", from, to);
+                await HandleEndGame();
+                break;
+            case MoveResultType.InvalidMove:
+                await Clients.Caller.SendAsync("InvalidMove");
+                break;
+        }
+    }*/
 }
