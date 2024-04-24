@@ -16,4 +16,8 @@ public class InviteCache : IInviteCache
     {
         _cache[invite.ToId] = invite;
     }
+    public void Remove(Guid id)
+    {
+        _cache.TryRemove(id,out _);
+    }
 }
