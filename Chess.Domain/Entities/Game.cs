@@ -17,4 +17,5 @@ public class Game : GameConfiguration
     public DateTime EndTime { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+    public ChessBoard Board { get; set; } = new ChessBoard() { AutoEndgameRules = AutoEndgameRules.All };
 }
