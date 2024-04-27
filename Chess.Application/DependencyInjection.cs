@@ -7,7 +7,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
+        // Services
+        services.AddScoped<IInviteService, InviteService>();
+        services.AddScoped<IGameService, GameService>();
+        services.AddScoped<IPlayerService, PlayerService>();
+        services.AddScoped<IFriendsService, FriendsService>();
         return services;
     }
 }

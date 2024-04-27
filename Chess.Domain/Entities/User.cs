@@ -4,7 +4,7 @@ namespace Chess.Domain.Entities;
 
 public class User
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     public string Username { get; set; }
     public string Email { get; set; }
     public bool IsVerified { get; set; }
@@ -14,6 +14,10 @@ public class User
     public string Picture { get; set; }
     public string Country { get; set; }
     public Gender Gender { get; set; }
+    public int GenderId
+    {
+        set => Gender = (Gender)value;
+    }
     public string Password { get; set; }
     public string GoogleId { get; set; }
     public string FacebookId { get; set; }
@@ -22,4 +26,5 @@ public class User
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public Setting Settings { get; set; }
+    public List<Statistic> Statistics { get; set; }
 }
