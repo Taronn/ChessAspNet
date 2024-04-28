@@ -186,4 +186,11 @@ public class ChessHub : Hub
             await Clients.User(opponent?.Id.ToString() ?? "").SendAsync("DrawOfferRejected");
         }
     }
+
+    public async Task GetGame()
+    {
+        Game game = _gameService.Find(UserId);
+        await Clients.User(UserId.ToString()).SendAsync("SetGame",game);
+        
+    }
 }
