@@ -69,7 +69,7 @@ namespace Chess.Application.Services
                 throw new Exception();
             }
             Game game = _gameService.Create(invite);
-
+            _inviteCache.Remove(toId);
             return game;
         }
     }

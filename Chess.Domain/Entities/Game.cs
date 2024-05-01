@@ -17,5 +17,6 @@ public class Game : GameConfiguration
     public DateTime EndTime { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsDrawOffered = false;
     public ChessBoard Board { get; set; } = new ChessBoard() { AutoEndgameRules = AutoEndgameRules.All };
 }

@@ -7,9 +7,9 @@ public interface IGameService
     Game Create(Invite invite);
     Game Find(Guid id);
     void Remove(Guid id);
-    Player GetOpponent(Player player, bool onlineOnly = true);
-/*    async Task<EndgameType?> EndGameAsync(Player player);
-*/    bool IsPlayerTurn(Player player, Game game);
+    Player GetOpponent(Guid id, bool onlineOnly = true);
+    Task<EndgameType?> EndGameAsync(Player player);
+    bool IsPlayerTurn(Player player, Game game);
     bool Resign(Player player);
     bool OfferDraw(Player player);
 /*    async Task UpdateStats(Game game);
