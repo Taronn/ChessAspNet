@@ -9,19 +9,21 @@ public class GameService : IGameService
 {
     private readonly IGameCache _gameCache;
     private readonly IPlayerCache _playerCache;
+    private readonly IGameRepository _gameRepository;
 
-    public GameService(IGameCache gameCache, IPlayerCache playerCache)
+    public GameService(IGameCache gameCache, IPlayerCache playerCache, IGameRepository gameRepository)
     {
         _gameCache = gameCache;
         _playerCache = playerCache;
+        _gameRepository = gameRepository;
     }
     public Game Find(Guid id)
     {
         return _gameCache.Find(id);
     }
-    public void Remove(Guid id)
+    public void Remove(Game game)
     {
-        _gameCache.Remove(id);
+        _gameCache.Remove(game);
     }
 
     public Game Create(Invite invite)
@@ -51,14 +53,14 @@ public class GameService : IGameService
     {
         return game.Board.Turn == (player == game.WhitePlayer ? PieceColor.White : PieceColor.Black);
     }
-    public Player GetOpponent(Player player, bool onlineOnly = true)
+    public Player GetOpponent(Guid id, bool onlineOnly = true)
     {
-        Game game = _gameCache.Find(player.Id);
+        Game game = _gameCache.Find(id);
         if (game == null)
         {
             return null;
         }
-        Player opponent = game.WhitePlayer == player ? game.BlackPlayer : game.WhitePlayer;
+        Player opponent = game.WhitePlayerId == id ? game.BlackPlayer : game.WhitePlayer;
         if (onlineOnly)
         {
             return _playerCache.Find(opponent.Id);
@@ -71,8 +73,8 @@ public class GameService : IGameService
         if (IsPlayerTurn(player, game) && game.Board.IsValidMove(move))
         {
             game.Board.Move(move);
-/*            game.IsDrawOffered = false;
-*/            if (game.Board.IsEndGame)
+            game.IsDrawOffered = false;
+            if (game.Board.IsEndGame)
             {
                 return MoveResultType.EndGame;
             }
@@ -102,12 +104,12 @@ public class GameService : IGameService
             game.Winner = null;
         }
 
-        await UpdateStats(game);
-/*        await _gameRepository.CreateGameAsync(_mapper.Map<Game>(game));
-*/        Remove(player.Id);
+        /*await UpdateStats(game);*/
+/*        await _gameRepository.AddAsync(game);
+*/        Remove(game);
         return endGame.EndgameType;
     }
-    private async Task UpdateStats(Game game)
+    /*private async Task UpdateStats(Game game)
     {
         bool? isWhiteWinner, isBlackWinner;
         if (game.Winner == null)
@@ -126,12 +128,12 @@ public class GameService : IGameService
             isWhiteWinner = false;
         }
 
-       /* int oldWhiteRating = game.WhitePlayer.Stats.UpdateStats(game.WhitePlayer.Stats.Rating, isWhiteWinner);
+       *//* int oldWhiteRating = game.WhitePlayer.Stats.UpdateStats(game.WhitePlayer.Stats.Rating, isWhiteWinner);
         game.BlackPlayer.Stats.UpdateStats(oldWhiteRating, isBlackWinner);
 
         await _statsRepository.UpdateStatsAsync(_mapper.Map<Stats>(game.WhitePlayer));
-        await _statsRepository.UpdateStatsAsync(_mapper.Map<Stats>(game.BlackPlayer));*/
-    }
+        await _statsRepository.UpdateStatsAsync(_mapper.Map<Stats>(game.BlackPlayer));*//*
+    }*/
     public bool Resign(Player player)
     {
         Game game = _gameCache.Find(player.Id);
@@ -144,32 +146,32 @@ public class GameService : IGameService
     }
     public bool OfferDraw(Player player)
     {
-        Player opponent = GetOpponent(player);
+        Player opponent = GetOpponent(player.Id);
         Game game = _gameCache.Find(player.Id);
-        /*if (game != null && opponent != null && IsPlayerTurn(player, game) && !game.IsDrawOffered)
+        if (game != null && opponent != null && IsPlayerTurn(player, game) && !game.IsDrawOffered)
         {
             game.IsDrawOffered = true;
             return true;
-        }*/
+        }
         return false;
     }
     public bool AcceptDraw(Player player)
     {
         Game game = _gameCache.Find(player.Id);
-        /*if (game != null && game.IsDrawOffered)
+        if (game != null && game.IsDrawOffered)
         {
             game.Board.Draw();
             return true;
-        }*/
+        }
         return false;
     }
     public bool RejectDraw(Player player)
     {
         Game game = _gameCache.Find(player.Id);
-        /*if (game != null && game.IsDrawOffered)
+        if (game != null && game.IsDrawOffered)
         {
             return true;
-        }*/
+        }
         return false;
     }
     public enum MoveResultType

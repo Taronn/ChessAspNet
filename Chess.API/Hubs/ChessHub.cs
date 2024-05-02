@@ -45,17 +45,6 @@ public class ChessHub : Hub
         Game game = _gameService.Find(UserId);
         await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", players);
         await Clients.Others.SendAsync("PlayerJoin", player);
-        
-       /* await Clients.Caller.SendAsync("SetGame", game.Board.ToPgn(), game.WhitePlayer, game.BlackPlayer);
-        Player opponent = _gameService.GetOpponent(player);
-        if (opponent == null)
-        {
-            await Clients.Caller.SendAsync("OpponentDisconnected");
-        }
-        else
-        {
-            await Clients.User(opponent.Id.ToString()).SendAsync("OpponentConnected");
-        }*/
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
@@ -70,6 +59,7 @@ public class ChessHub : Hub
         try
         {
             Game game = _inviteService.Accept(UserId);
+            _inviteService.Reject(UserId);
             await Clients.Users(game.WhitePlayerId.ToString(),game.BlackPlayerId.ToString()).SendAsync("StartGame", game);
             await Clients.All.SendAsync("GameStarted", game);
         }
@@ -81,7 +71,7 @@ public class ChessHub : Hub
     public async Task RejectInvite()
     {
         Invite invite = _inviteService.Reject(UserId);
-        await Clients.User(UserId.ToString()).SendAsync("InviteRejected", invite);
+        await Clients.User(invite.FromId.ToString()).SendAsync("InviteRejected", invite);
     }
 
     public async Task SendMessage(string message)
@@ -90,48 +80,39 @@ public class ChessHub : Hub
         // Broadcast the received message to all clients
         await Clients.Others.SendAsync("ReceiveMessage", player, message);
     }
-
-    // for testing purposes only - remove later
-    /*  public async Task MakeMove(string from, string to, string opponentId)
-      {
-          System.Console.WriteLine($"Move from {from} to {to} {opponentId}");
-          System.Console.WriteLine(opponentId);
-          System.Console.WriteLine(UserId);
-          await Clients.User(opponentId).SendAsync("MakeMove", from, to);
-      }*/
-   /* private async Task HandleEndGame()
+    private async Task HandleEndGame()
     {
         Player Player = _playerService.Find(UserId);
-        Player Opponent = _gameService.GetOpponent(Player);
+        Player Opponent = _gameService.GetOpponent(UserId);
         IClientProxy player = Clients.User(Player.Id.ToString());
         IClientProxy opponent = Clients.User(Opponent?.Id.ToString() ?? "");
-        IClientProxy players = Clients.Users(UserId, Opponent?.Id.ToString() ?? "");
+        IClientProxy players = Clients.Users(UserId.ToString(), Opponent?.Id.ToString() ?? "");
         EndgameType? endGameType = await _gameService.EndGameAsync(Player);
 
         await (endGameType switch
         {
             EndgameType.Checkmate => Task.WhenAll(
-                player.SendAsync("Win", "checkmate"),
-                opponent.SendAsync("Lose", "checkmate")
+                player.SendAsync("Win", "Checkmate"),
+                opponent.SendAsync("Lose", "Checkmate")
             ),
             EndgameType.Resigned => Task.WhenAll(
-                opponent.SendAsync("Win", "resignation"),
-                player.SendAsync("Lose", "resignation")
+                opponent.SendAsync("Win", "Resignation"),
+                player.SendAsync("Lose", "Resignation")
             ),
-            EndgameType.DrawDeclared => players.SendAsync("Draw", "draw declaration"),
-            EndgameType.Stalemate => players.SendAsync("Draw", "stalemate"),
-            EndgameType.FiftyMoveRule => players.SendAsync("Draw", "fifty move rule"),
-            EndgameType.InsufficientMaterial => players.SendAsync("Draw", "insufficient material"),
-            EndgameType.Repetition => players.SendAsync("Draw", "repetition"),
+            EndgameType.DrawDeclared => players.SendAsync("Draw", "Draw declaration"),
+            EndgameType.Stalemate => players.SendAsync("Draw", "Stalemate"),
+            EndgameType.FiftyMoveRule => players.SendAsync("Draw", "Fifty move rule"),
+            EndgameType.InsufficientMaterial => players.SendAsync("Draw", "Insufficient material"),
+            EndgameType.Repetition => players.SendAsync("Draw", "Repetition"),
             _ => Task.CompletedTask
         });
-    }*/
+    }
 
     public async Task MakeMove(string from, string to)
     {
         Player player = _playerService.Find(UserId);
         Game game = _gameService.Find(UserId);
-        Player opponent = _gameService.GetOpponent(player);
+        Player opponent = _gameService.GetOpponent(UserId);
         if (game == null)
         {
             return;
@@ -143,9 +124,9 @@ public class ChessHub : Hub
                 await Clients.User(opponent.Id.ToString()).SendAsync("MakeMove", from, to);
                 break;
             case MoveResultType.EndGame:
+                await HandleEndGame();
                 await Clients.User(opponent.Id.ToString()).SendAsync("MakeMove", from, to);
-/*                await HandleEndGame();
-*/                break;
+                break;
             case MoveResultType.InvalidMove:
                 await Clients.Caller.SendAsync("InvalidMove");
                 break;
@@ -156,13 +137,13 @@ public class ChessHub : Hub
         Player player = _playerService.Find(UserId);
         if (_gameService.Resign(player))
         {
-/*            await HandleEndGame();
-*/        }
+            await HandleEndGame();
+        }
     }
     public async Task OfferDraw()
     {
         Player player = _playerService.Find(UserId);
-        Player opponent = _gameService.GetOpponent(player);
+        Player opponent = _gameService.GetOpponent(player.Id);
         if (_gameService.OfferDraw(player))
         {
             await Clients.User(opponent!.Id.ToString()).SendAsync("DrawOfferReceived");
@@ -174,13 +155,13 @@ public class ChessHub : Hub
         Player player = _playerService.Find(UserId);
         if (_gameService.AcceptDraw(player))
         {
-/*            await HandleEndGame();
-*/        }
+            await HandleEndGame();
+        }
     }
     public async Task RejectDraw()
     {
         Player player = _playerService.Find(UserId);
-        Player opponent = _gameService.GetOpponent(player);
+        Player opponent = _gameService.GetOpponent(player.Id);
         if (_gameService.RejectDraw(player))
         {
             await Clients.User(opponent?.Id.ToString() ?? "").SendAsync("DrawOfferRejected");
@@ -191,6 +172,5 @@ public class ChessHub : Hub
     {
         Game game = _gameService.Find(UserId);
         await Clients.User(UserId.ToString()).SendAsync("SetGame",game);
-        
     }
 }

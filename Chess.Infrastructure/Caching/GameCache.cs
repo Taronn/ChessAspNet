@@ -18,8 +18,9 @@ public class GameCache : IGameCache
         _cache[game.WhitePlayerId] = game;
         _cache[game.BlackPlayerId] = game;
     }
-    public void Remove(Guid id)
+    public void Remove(Game game)
     {
-        _cache.TryRemove(id, out _);
+        _cache.TryRemove(game.WhitePlayerId, out _);
+        _cache.TryRemove(game.BlackPlayerId, out _);
     }
 }
