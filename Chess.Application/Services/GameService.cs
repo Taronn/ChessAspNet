@@ -21,9 +21,9 @@ public class GameService : IGameService
     {
         return _gameCache.Find(id);
     }
-    public void Remove(Guid id)
+    public void Remove(Game game)
     {
-        _gameCache.Remove(id);
+        _gameCache.Remove(game);
     }
 
     public Game Create(Invite invite)

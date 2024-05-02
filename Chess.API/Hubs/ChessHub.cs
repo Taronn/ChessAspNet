@@ -43,10 +43,6 @@ public class ChessHub : Hub
         Player[] players = _playerService.FindAll();
         Player player = await _playerService.Join(UserId);
         Game game = _gameService.Find(UserId);
-        if (game != null)
-        {
-            await Clients.Others.SendAsync("PlayerLeave", UserId);
-        }
         await Clients.User(UserId.ToString()).SendAsync("GetPlayersList", players);
         await Clients.Others.SendAsync("PlayerJoin", player);
     }
@@ -63,6 +59,7 @@ public class ChessHub : Hub
         try
         {
             Game game = _inviteService.Accept(UserId);
+            _inviteService.Reject(UserId);
             await Clients.Users(game.WhitePlayerId.ToString(),game.BlackPlayerId.ToString()).SendAsync("StartGame", game);
             await Clients.All.SendAsync("GameStarted", game);
         }
@@ -71,10 +68,10 @@ public class ChessHub : Hub
             await Clients.User(UserId.ToString()).SendAsync("Error", "ACCEPT_INVITE");
         }
     }
-    public async Task RejectInvite(Invite invite)
+    public async Task RejectInvite()
     {
-        _inviteService.Reject(invite.FromId);
-        await Clients.User(invite.FromId.ToString()).SendAsync("InviteRejected");
+        Invite invite = _inviteService.Reject(UserId);
+        await Clients.User(invite.FromId.ToString()).SendAsync("InviteRejected", invite);
     }
 
     public async Task SendMessage(string message)
@@ -95,18 +92,18 @@ public class ChessHub : Hub
         await (endGameType switch
         {
             EndgameType.Checkmate => Task.WhenAll(
-                player.SendAsync("Win", "You won, checkmate"),
-                opponent.SendAsync("Lose", "You lost, checkmate")
+                player.SendAsync("Win", "Checkmate"),
+                opponent.SendAsync("Lose", "Checkmate")
             ),
             EndgameType.Resigned => Task.WhenAll(
-                opponent.SendAsync("Win", "The opponent refused to continue the game, you won"),
-                player.SendAsync("Lose", "You refused to continue the game, you lost")
+                opponent.SendAsync("Win", "Resignation"),
+                player.SendAsync("Lose", "Resignation")
             ),
-            EndgameType.DrawDeclared => players.SendAsync("Draw", "draw declaration"),
-            EndgameType.Stalemate => players.SendAsync("Draw", "stalemate"),
-            EndgameType.FiftyMoveRule => players.SendAsync("Draw", "fifty move rule"),
-            EndgameType.InsufficientMaterial => players.SendAsync("Draw", "insufficient material"),
-            EndgameType.Repetition => players.SendAsync("Draw", "repetition"),
+            EndgameType.DrawDeclared => players.SendAsync("Draw", "Draw declaration"),
+            EndgameType.Stalemate => players.SendAsync("Draw", "Stalemate"),
+            EndgameType.FiftyMoveRule => players.SendAsync("Draw", "Fifty move rule"),
+            EndgameType.InsufficientMaterial => players.SendAsync("Draw", "Insufficient material"),
+            EndgameType.Repetition => players.SendAsync("Draw", "Repetition"),
             _ => Task.CompletedTask
         });
     }
