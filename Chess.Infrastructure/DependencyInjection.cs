@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IFriendsRepository, FriendsRepository>();
         services.AddScoped<IGameRepository, GameRepository>();
+        services.AddScoped<IStatisticRepository, StatisticRepository>();
         // Caching
         services.AddSingleton<IGameCache, GameCache>();
         services.AddSingleton<IInviteCache, InviteCache>();

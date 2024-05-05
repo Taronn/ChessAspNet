@@ -13,7 +13,7 @@ public class PlayerRepository : IPlayerRepository
     
     public async void AddAsync(User user)
     {
-        const string query = """INSERT INTO users (id, username, password, email) VALUES (@Id, @Username, @Password, @Email)""";
+        const string query = @"INSERT INTO ""Users"" (""Username"", ""Password"", ""Email"") VALUES (@Username, @Password, @Email)";
         var connection = _sqlConnectionFactory.Create();
         await connection.OpenAsync();
         await connection.ExecuteAsync(query, user);

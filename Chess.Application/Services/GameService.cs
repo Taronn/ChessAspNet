@@ -1,7 +1,10 @@
 using Chess.Application.Interfaces.Caching;
 using Chess.Application.Interfaces.Repositories;
 using Chess.Application.Interfaces.Services;
+using Chess.Domain.Entities;
 using Chess.Domain.Enums;
+using Newtonsoft.Json.Linq;
+using System.Numerics;
 
 namespace Chess.Application.Services;
 
@@ -10,12 +13,14 @@ public class GameService : IGameService
     private readonly IGameCache _gameCache;
     private readonly IPlayerCache _playerCache;
     private readonly IGameRepository _gameRepository;
+    private readonly IStatisticRepository _statisticRepository;
 
-    public GameService(IGameCache gameCache, IPlayerCache playerCache, IGameRepository gameRepository)
+    public GameService(IGameCache gameCache, IPlayerCache playerCache, IGameRepository gameRepository,IStatisticRepository statisticRepository)
     {
         _gameCache = gameCache;
         _playerCache = playerCache;
         _gameRepository = gameRepository;
+        _statisticRepository = statisticRepository;
     }
     public Game Find(Guid id)
     {
@@ -98,18 +103,19 @@ public class GameService : IGameService
         if (endGame.EndgameType == EndgameType.Checkmate || endGame.EndgameType == EndgameType.Resigned)
         {
             game.Winner = endGame.WonSide == PieceColor.White ? game.WhitePlayer : game.BlackPlayer;
+            game.WinnerId = game.Winner.Id;
         }
         else
         {
             game.Winner = null;
         }
-
-        /*await UpdateStats(game);*/
-/*        await _gameRepository.AddAsync(game);
-*/        Remove(game);
+        game.Pgn = game.Board.ToPgn();
+        await UpdateStats(game);
+        await _gameRepository.AddAsync(game);
+        Remove(game);
         return endGame.EndgameType;
     }
-    /*private async Task UpdateStats(Game game)
+    private async Task UpdateStats(Game game)
     {
         bool? isWhiteWinner, isBlackWinner;
         if (game.Winner == null)
@@ -127,13 +133,16 @@ public class GameService : IGameService
             isBlackWinner = true;
             isWhiteWinner = false;
         }
+        Statistic oldWhiteStatistic = game.WhitePlayer.Statistics[game.TypeId-1];
+        Statistic oldBlackStatistic = game.BlackPlayer.Statistics[game.TypeId-1];
 
-       *//* int oldWhiteRating = game.WhitePlayer.Stats.UpdateStats(game.WhitePlayer.Stats.Rating, isWhiteWinner);
-        game.BlackPlayer.Stats.UpdateStats(oldWhiteRating, isBlackWinner);
+        int oldWhiteRating = oldWhiteStatistic.Rating;
+        UpdateStatistic(oldWhiteStatistic,oldBlackStatistic.Rating,isWhiteWinner);
+        UpdateStatistic(oldBlackStatistic,oldWhiteRating, isBlackWinner);
 
-        await _statsRepository.UpdateStatsAsync(_mapper.Map<Stats>(game.WhitePlayer));
-        await _statsRepository.UpdateStatsAsync(_mapper.Map<Stats>(game.BlackPlayer));*//*
-    }*/
+        await _statisticRepository.AddAsync(game.WhitePlayer.Statistics[game.TypeId - 1]);
+        await _statisticRepository.AddAsync(game.BlackPlayer.Statistics[game.TypeId - 1]);
+    }
     public bool Resign(Player player)
     {
         Game game = _gameCache.Find(player.Id);
@@ -173,6 +182,33 @@ public class GameService : IGameService
             return true;
         }
         return false;
+    }
+    public int UpdateStatistic(Statistic statistic, int opponentRating, bool? isWinner)
+    {
+        double score;
+
+        statistic.GamesPlayed++;
+        if (isWinner == null)
+        {
+            statistic.Draws++;
+            score = 0.5;
+        }
+        else if (isWinner == true)
+        {
+            statistic.Wins++;
+            score = 1.0;
+        }
+        else
+        {
+            statistic.Losses++;
+            score = 0;
+        }
+        double k = 32; // The K-factor determines the magnitude of the change in rating
+        double winProbability = 1.0 / (1.0 + Math.Pow(10, (opponentRating - statistic.Rating) / 400.0)); // Calculate the win probability
+
+        int oldRating = statistic.Rating;
+        statistic.Rating = (int)Math.Round(statistic.Rating + k * (score - winProbability)); // Update the rating using the formula
+        return oldRating;
     }
     public enum MoveResultType
     {
