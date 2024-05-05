@@ -12,10 +12,15 @@ public class StatisticRepository : IStatisticRepository
         _sqlConnectionFactory = sqlConnectionFactory;
     }
 
-    public async Task<Statistic> AddAsync(Statistic statistic)
+    public async Task<Statistic> UpdateAsync(Statistic statistic)
     {
-        const string query = @"INSERT INTO ""Statistic"" (""TypeId"",""Wins"",""Losses"",""Draws"",""Rating"",""GamesPlayed"",""UserId"")
-                                        VALUES (@TypeId,@Wins,@Losses,@Draws,@Rating,@GamesPlayed,@UserId)";
+        const string query = @"UPDATE ""Statistics"" 
+                           SET ""Wins"" = @Wins,
+                               ""Losses"" = @Losses,
+                               ""Draws"" = @Draws,
+                               ""Rating"" = @Rating,
+                               ""GamesPlayed"" = @GamesPlayed
+                           WHERE ""TypeId"" = @TypeId AND ""UserId"" = @UserId";
         var connection = _sqlConnectionFactory.Create();
         await connection.OpenAsync();
         await connection.ExecuteAsync(query, statistic);

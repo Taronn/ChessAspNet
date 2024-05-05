@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace Chess.Application.Interfaces.Repositories;
 public interface IStatisticRepository
 {
-    Task<Statistic> AddAsync(Statistic statistic);
+    Task<Statistic> UpdateAsync(Statistic statistic);
 }

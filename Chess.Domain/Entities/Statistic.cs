@@ -6,10 +6,16 @@ namespace Chess.Domain.Entities;
 public class Statistic
 {
     public Guid Id { get; set; }
+    private int _TypeId;
     public GameType Type { get; set; }
     public int TypeId
     {
-        set => Type = (GameType)value;
+        set
+        {
+            _TypeId = value;
+            Type = (GameType)value;
+        }
+        get => _TypeId;
     }
     [Required]
     public int GamesPlayed { get; set; } = 0;

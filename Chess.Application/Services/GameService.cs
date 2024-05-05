@@ -137,11 +137,11 @@ public class GameService : IGameService
         Statistic oldBlackStatistic = game.BlackPlayer.Statistics[game.TypeId-1];
 
         int oldWhiteRating = oldWhiteStatistic.Rating;
-        UpdateStatistic(oldWhiteStatistic,oldBlackStatistic.Rating,isWhiteWinner);
-        UpdateStatistic(oldBlackStatistic,oldWhiteRating, isBlackWinner);
+        Statistic newWhiteStatistic = UpdateStatistic(oldWhiteStatistic,oldBlackStatistic.Rating,isWhiteWinner);
+        Statistic newBlackStatistic = UpdateStatistic(oldBlackStatistic,oldWhiteRating, isBlackWinner);
 
-        await _statisticRepository.AddAsync(game.WhitePlayer.Statistics[game.TypeId - 1]);
-        await _statisticRepository.AddAsync(game.BlackPlayer.Statistics[game.TypeId - 1]);
+        await _statisticRepository.UpdateAsync(newWhiteStatistic);
+        await _statisticRepository.UpdateAsync(newBlackStatistic);
     }
     public bool Resign(Player player)
     {
@@ -183,7 +183,7 @@ public class GameService : IGameService
         }
         return false;
     }
-    public int UpdateStatistic(Statistic statistic, int opponentRating, bool? isWinner)
+    public Statistic UpdateStatistic(Statistic statistic, int opponentRating, bool? isWinner)
     {
         double score;
 
@@ -206,9 +206,8 @@ public class GameService : IGameService
         double k = 32; // The K-factor determines the magnitude of the change in rating
         double winProbability = 1.0 / (1.0 + Math.Pow(10, (opponentRating - statistic.Rating) / 400.0)); // Calculate the win probability
 
-        int oldRating = statistic.Rating;
         statistic.Rating = (int)Math.Round(statistic.Rating + k * (score - winProbability)); // Update the rating using the formula
-        return oldRating;
+        return statistic;
     }
     public enum MoveResultType
     {
