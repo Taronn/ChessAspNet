@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Chess.Application.Interfaces.Repositories;
-public interface IGameRepository
+public interface IStatisticRepository
 {
-    Task<Game> AddAsync(Game game);
-    Task<Game> FindAsync(Guid id);
+    Task<Statistic> UpdateAsync(Statistic statistic);
 }

@@ -12,8 +12,7 @@ public interface IGameService
     bool IsPlayerTurn(Player player, Game game);
     bool Resign(Player player);
     bool OfferDraw(Player player);
-/*    async Task UpdateStats(Game game);
-*/    bool AcceptDraw(Player player);
+    bool AcceptDraw(Player player);
     bool RejectDraw(Player player);
     MoveResultType MakeMove(Player player, Game game, string from, string to);
 }

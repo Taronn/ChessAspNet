@@ -12,9 +12,10 @@ public class GameRepository : IGameRepository
         _sqlConnectionFactory = sqlConnectionFactory;
     }
 
-   /* public async Task<Game> AddAsync(Game game)
+    public async Task<Game> AddAsync(Game game)
     {
-        const string query = """INSERT INTO games (id, whitePlayerId, blackPlayerId, winnerId) VALUES (@Id, @WhitePlayerId, @BlackPlayerId, @WinnerId)""";
+        const string query = @"INSERT INTO ""Games"" (""WhitePlayerId"",""BlackPlayerId"",""TypeId"",""Pgn"",""StartTime"",""EndTime"",""WinnerId"",""Timer"",""TimerIncrement"")
+                                        VALUES (@WhitePlayerId,@BlackPlayerId,@TypeId,@Pgn,@StartTime,@EndTime,@WinnerId,@Timer,@TimerIncrement)";
         var connection = _sqlConnectionFactory.Create();
         await connection.OpenAsync();
         await connection.ExecuteAsync(query, game);
@@ -43,5 +44,5 @@ public class GameRepository : IGameRepository
         );
 
         return game.FirstOrDefault();
-    }*/
+    }
 }
